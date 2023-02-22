@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import "./ProgressArea.scss";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { nextMusic, playMusic,stopMusic } from "../../store/musicPlayerReducer";
@@ -6,14 +6,18 @@ function ProgressArea(props, ref) {
   const audio = useRef()
   const progressBar = useRef()
   const dispatch = useDispatch()
-  const{playList, currentIndex} = useSelector(state => ({playList: state.playList, currentIndex:state.currentIndex}), shallowEqual)
+  const{playList, currentIndex, repeat} = useSelector(state => ({playList: state.playList, currentIndex:state.currentIndex, repeat:state.repeat}), shallowEqual)
   const [currentTime, setCurrentTime] = useState("00:00")
   const [duration, setDuration] = useState("00:00")
 
   useImperativeHandle(ref, ()=> ({
     play: ()=>{audio.current.play()},
     pause: ()=>{audio.current.pause()},
-    changeVolume: (volume) => {audio.current.volume = volume}
+    changeVolume: (volume) => {audio.current.volume = volume},
+    resetDuration: ()=> {
+      // control에서 불러서 사용할 수 있게
+      audio.current.currentTime = 0
+    }
   }))
 
   const onPlay = () => dispatch(playMusic())
@@ -41,7 +45,14 @@ function ProgressArea(props, ref) {
     setDuration(getTimeConvert(duration))
   }
   const onPause = () => dispatch(stopMusic())
-  const onEnded = () => dispatch(nextMusic())
+  const onEnded = useCallback(() => {
+    if(repeat === "ONE") {
+      audio.current.currentTime = 0;
+      audio.current.play()
+    } else {
+      dispatch(nextMusic())
+    }
+  }, [repeat,dispatch])
 
   return (
     <div className="progress-area" onClick={onClickProgress}>

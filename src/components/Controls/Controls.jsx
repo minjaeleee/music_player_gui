@@ -15,7 +15,6 @@ import { nextMusic, prevMusic, setRepeatMusic } from "../../store/musicPlayerRed
 import "./Controls.scss";
 
 const RepeatButton = ({repeat, ...props}) => {
-  console.log("props", props)
   switch(repeat) {
     case 'ALL':
       return <RepeatIcon sx={{fontSize:30, cursor:"pointer"}} {...props}/>
@@ -42,8 +41,22 @@ const Controls = ({
 
   const onClickPlay = () => play()
   const onClickPause = () => pause()
-  const onClickNext = () => dispatch(nextMusic())
-  const onClickPrev = () => dispatch(prevMusic())
+
+  const onClickNext = useCallback(() => {
+    if(repeat === "ONE") {
+      resetDuration()
+    } else {
+      dispatch(nextMusic())
+    }
+  },[repeat, resetDuration, dispatch])
+  // redux 최신의 상태(repeat)를 보장하기 위해서 useCallback
+  const onClickPrev = useCallback(() => {
+    if(repeat === "ONE") {
+      resetDuration()
+    } else {
+      dispatch(prevMusic())
+    }
+  },[repeat, resetDuration, dispatch])
 
   const onChangeVolume = (e) => {
     changeVolume(e.target.value)
