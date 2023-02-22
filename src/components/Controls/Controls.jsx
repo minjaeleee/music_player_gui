@@ -14,7 +14,7 @@ import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import { nextMusic, prevMusic, setRepeatMusic } from "../../store/musicPlayerReducer";
 import "./Controls.scss";
 
-const RepeatButton = ({repeat, ...props}) => {
+const RepeatButton = memo(({repeat, ...props}) => {
   switch(repeat) {
     case 'ALL':
       return <RepeatIcon sx={{fontSize:30, cursor:"pointer"}} {...props}/>
@@ -25,11 +25,10 @@ const RepeatButton = ({repeat, ...props}) => {
     default: 
       return null;
   }
-}
+})
 
 const Controls = ({
-  showMusicList,
-  setshowPlayList,
+  setShowPlayList,
   resetDuration,
   play,
   pause,
@@ -39,8 +38,8 @@ const Controls = ({
   const repeat = useSelector(state=>state.repeat)
   const dispatch = useDispatch()
 
-  const onClickPlay = () => play()
-  const onClickPause = () => pause()
+  const onClickPlay = useCallback(() => play(),[play])
+  const onClickPause = useCallback(() => pause(),[pause])
 
   const onClickNext = useCallback(() => {
     if(repeat === "ONE") {
@@ -58,18 +57,23 @@ const Controls = ({
     }
   },[repeat, resetDuration, dispatch])
 
-  const onChangeVolume = (e) => {
+  const onChangeVolume = useCallback((e) => {
     changeVolume(e.target.value)
-  }
+  },[changeVolume])
 
-  const onClickRepeat = () => {
+  const onClickRepeat = useCallback(() => {
     dispatch(setRepeatMusic())
-  }
+  },[dispatch])
+
+  const onClickShowPlayList = useCallback(() => {
+    setShowPlayList(true)
+  },[setShowPlayList])
 
   return (
     <div className="control-area">
       <QueueMusic
         sx={{ fontSize: 30, cursor: "pointer" }}
+        onClick={onClickShowPlayList}
       />
       {/* <RepeatIcon sx={{fontSize:30, cursor:"pointer"}}></RepeatIcon>
       <RepeatOneIcon />

@@ -12,9 +12,26 @@ import {
   updatePlayList,
 } from "../../store/musicPlayerReducer";
 
-const PlayList = () => {
+const PlayList = ({showPlayList, setShowPlayList}) => {
+  const playList = useSelector(state => state.playList)
+  const dispatch = useDispatch()
+
+  const onClickClosePlayList = useCallback(() => {
+    setShowPlayList(false)
+  },[setShowPlayList])
+
+  const onClickItem = useCallback(index => {
+    dispatch(setCurrentIndex(index))
+  },[dispatch])
+
+  const onDropItem = useCallback(newPlayList => {
+    dispatch(updatePlayList(newPlayList))
+  },[dispatch])
+
+  const renderItem = useCallback((item,index) => <PlayListItem item={item} index={index}/>,[])
+
   return (
-    <div className={classNames("play-list")}>
+    <div className={classNames("play-list", {'show':showPlayList})}>
       <div className="header">
         <div className="row">
           <QueueMusic className="list" />
@@ -22,14 +39,15 @@ const PlayList = () => {
         </div>
         <Close
           sx={{ fontSize: 22, cursor: "pointer" }}
+          onClick={onClickClosePlayList}
         />
       </div>
-      {/* <SortableList
+      <SortableList
         data={playList}
         onDropItem={onDropItem}
         onClickItem={onClickItem}
         renderItem={renderItem}
-      /> */}
+      />
     </div>
   );
 };

@@ -25,7 +25,7 @@ function PlayListItem({ item, index }) {
     getTime();
   }, [item.src]);
   return (
-    <>
+    <> 
       <div className={classNames("row", { playing: currentIndex === index })}>
         <span>{item.name}</span>
         <p>{item.artist}</p>

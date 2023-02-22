@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, memo, useCallback, useImperativeHandle, useRef, useState } from "react";
 import "./ProgressArea.scss";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { nextMusic, playMusic,stopMusic } from "../../store/musicPlayerReducer";
@@ -20,22 +20,22 @@ function ProgressArea(props, ref) {
     }
   }))
 
-  const onPlay = () => dispatch(playMusic())
+  const onPlay = useCallback(() => dispatch(playMusic()),[dispatch])
 
-  const getTimeConvert = (time) => {
+  const getTimeConvert = useCallback((time) => {
     const minute = `0${parseInt(time/60,10)}`
     const seconds =`0${parseInt(time%60)}`
     return `${minute}:${seconds.slice(-2)}`
-  }
+  },[])
 
-  const onClickProgress = e => {
+  const onClickProgress = useCallback(e => {
     const progressBarWidth = e.currentTarget.clientWidth
     const offsetX = e.nativeEvent.offsetX
     const duration = audio.current.duration
     audio.current.currentTime = (offsetX/progressBarWidth) * duration
-  }
+  },[])
 
-  const onTimeUpdate = (e) => {
+  const onTimeUpdate = useCallback((e) => {
     if(e.target.readyState === 0) return;
     const currentTime = e.target.currentTime
     const duration = e.target.duration
@@ -43,8 +43,8 @@ function ProgressArea(props, ref) {
     progressBar.current.style.width = `${progressBarWidth}%`
     setCurrentTime(getTimeConvert(currentTime))
     setDuration(getTimeConvert(duration))
-  }
-  const onPause = () => dispatch(stopMusic())
+  },[getTimeConvert])
+  const onPause = useCallback(() => dispatch(stopMusic()),[dispatch])
   const onEnded = useCallback(() => {
     if(repeat === "ONE") {
       audio.current.currentTime = 0;
@@ -77,4 +77,4 @@ function ProgressArea(props, ref) {
   );
 }
 
-export default forwardRef(ProgressArea);
+export default memo(forwardRef(ProgressArea));

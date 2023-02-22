@@ -7,20 +7,19 @@ import React, { useCallback, useRef, useState } from "react";
 
 function App() {
   const audioRef = useRef()
-  const onPlay = () => {
-    console.log("onPlay", audioRef.current.play())
+  const [showPlayList, setShowPlayList] = useState(false)
+  const onPlay = useCallback(() => {
     audioRef.current.play()
-  }
-  const onPause = () => {
-    console.log("onPause", audioRef.current.pause())
+  }, [])
+  const onPause = useCallback(() => {
     audioRef.current.pause()
-  }
-  const changeVolume = (volume) => {
+  }, [])
+  const changeVolume = useCallback((volume) => {
     audioRef.current.changeVolume(volume)
-  }
-  const resetDuration = () => {
+  }, [])
+  const resetDuration = useCallback(() => {
     audioRef.current.resetDuration()
-  }
+  }, [])
 
   return (
     <div className="App">
@@ -32,8 +31,12 @@ function App() {
           pause={onPause}
           changeVolume={changeVolume}
           resetDuration={resetDuration}
+          setShowPlayList={setShowPlayList}
         />
-        <PlayList />
+        <PlayList
+          setShowPlayList={setShowPlayList}
+          showPlayList={showPlayList}
+        />
       </div>
     </div>
   );
