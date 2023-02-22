@@ -56,16 +56,23 @@ const initialState = {
 }
 
 // ACTION TYPE
+const repeatMode = ["ONE", "ALL", "SHUFFLE"]
 const PLAY_MUSIC = "musicPlayer/PLAY_MUSIC"
 const STOP_MUSIC = "musicPlayer/STOP_MUSIC"
 const NEXT_MUSIC = "musicPlayer/NEXT_MUSIC"
 const PREV_MUSIC = "musicPlayer/PREV_MUSIC"
+const SET_REPEAT = "musicPlayer/SET_REPEAT"
 
 export const playMusic = () => ({ type: PLAY_MUSIC })
 export const stopMusic = () => ({ type: STOP_MUSIC })
 export const nextMusic = () => ({ type: NEXT_MUSIC })
 export const prevMusic = () => ({ type: PREV_MUSIC })
+export const setRepeatMusic = () => ({ type: SET_REPEAT })
 
+const getRandomNum = (arr, excludeNum) => {
+  const randomNumber = Math.floor(Math.random() * arr.length)
+  return arr[randomNumber] === excludeNum ? getRandomNum(arr, excludeNum) : arr[randomNumber]
+}
 
 export default function musicPlayerReducer(state = initialState, action) {
   switch (action.type) {
@@ -80,18 +87,27 @@ export default function musicPlayerReducer(state = initialState, action) {
         playing: false
       }
     case NEXT_MUSIC:
-      const nextIndex = (state.currentIndex + 1) % state.playList.length
+      const nextIndex = state.repeat === "SHUFFLE"
+        ? getRandomNum(Array.from(Array(playList.length).keys()), state.currentIndex)
+        : (state.currentIndex + 1) % state.playList.length
       return {
         ...state,
         currentIndex: nextIndex,
         currentMusicId: state.playList[nextIndex].id
       }
     case PREV_MUSIC:
-      const prevIndex = (state.currentIndex - 1 + state.playList.length) % state.playList.length
+      const prevIndex = state.repeat === "SHUFFLE"
+        ? getRandomNum(Array.from(playList.length).keys(), state.currentIndex)
+        : (state.currentIndex - 1 + state.playList.length) % state.playList.length
       return {
         ...state,
         currentIndex: prevIndex,
         currentMusicId: state.playList[prevIndex].id
+      }
+    case SET_REPEAT:
+      return {
+        ...state,
+        repeat: repeatMode[(repeatMode.indexOf(state.repeat) + 1) % repeatMode.length]
       }
     default:
       return state
