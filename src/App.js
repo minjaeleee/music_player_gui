@@ -8,6 +8,8 @@ import React, { useCallback, useRef, useState } from "react";
 function App() {
   const audioRef = useRef()
   const [showPlayList, setShowPlayList] = useState(false)
+
+  /* audio를 play시키는 방법은 elment의 play() 함수를 이용하거나, element의 currentTIme을 제공해준다. */
   const onPlay = useCallback(() => {
     audioRef.current.play()
   }, [])

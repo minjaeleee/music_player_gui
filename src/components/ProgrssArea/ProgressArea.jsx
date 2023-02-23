@@ -10,17 +10,17 @@ function ProgressArea(props, ref) {
   const [currentTime, setCurrentTime] = useState("00:00")
   const [duration, setDuration] = useState("00:00")
 
+  // 부모 컴퍼넌트에서 ref를 재정의(커스터마이징)해서 사용할 수 있도록 선언
   useImperativeHandle(ref, ()=> ({
     play: ()=>{audio.current.play()},
     pause: ()=>{audio.current.pause()},
     changeVolume: (volume) => {audio.current.volume = volume},
-    resetDuration: ()=> {
-      // control에서 불러서 사용할 수 있게
-      audio.current.currentTime = 0
-    }
+    resetDuration: ()=> {audio.current.currentTime = 0}
   }))
 
-  const onPlay = useCallback(() => dispatch(playMusic()),[dispatch])
+  const onPlay = useCallback(() => {
+    dispatch(playMusic())
+  },[dispatch])
 
   const getTimeConvert = useCallback((time) => {
     const minute = `0${parseInt(time/60,10)}`
@@ -31,7 +31,9 @@ function ProgressArea(props, ref) {
   const onClickProgress = useCallback(e => {
     const progressBarWidth = e.currentTarget.clientWidth
     const offsetX = e.nativeEvent.offsetX
+    // 전체 시간
     const duration = audio.current.duration
+    // 이동한 비율 * 전체 시간 => 현재 시간
     audio.current.currentTime = (offsetX/progressBarWidth) * duration
   },[])
 

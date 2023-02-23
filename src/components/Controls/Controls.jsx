@@ -38,7 +38,8 @@ const Controls = ({
   const repeat = useSelector(state=>state.repeat)
   const dispatch = useDispatch()
 
-  const onClickPlay = useCallback(() => play(),[play])
+  const onClickPlay = useCallback(() => {
+    play()},[play])
   const onClickPause = useCallback(() => pause(),[pause])
 
   const onClickNext = useCallback(() => {
@@ -75,9 +76,6 @@ const Controls = ({
         sx={{ fontSize: 30, cursor: "pointer" }}
         onClick={onClickShowPlayList}
       />
-      {/* <RepeatIcon sx={{fontSize:30, cursor:"pointer"}}></RepeatIcon>
-      <RepeatOneIcon />
-      <ShuffleIcon /> */}
       <RepeatButton repeat={repeat} onClick={onClickRepeat}/>
       <SkipPrevious
         sx={{ fontSize: 30, cursor: "pointer" }}
@@ -104,11 +102,11 @@ const Controls = ({
         <input
           type="range"
           style={{ cursor: "pointer" }}
-          defaultValue={1}
+          defaultValue={0.1}
           onChange={onChangeVolume}
           min="0"
           max="1"
-          step="0.1"
+          step="0.01"
         />
       </div>
     </div>

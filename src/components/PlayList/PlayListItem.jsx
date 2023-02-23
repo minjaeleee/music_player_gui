@@ -23,7 +23,7 @@ function PlayListItem({ item, index }) {
       setduration(durationTime);
     }
     getTime();
-  }, [item.src]);
+  }, [item.src]); 
   return (
     <> 
       <div className={classNames("row", { playing: currentIndex === index })}>
